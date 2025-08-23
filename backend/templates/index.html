@@ -14,54 +14,70 @@
     <ul id="todo-list">
 
     </ul>
+    <input type="text" id="todo" autocomplete="off" name="task" class="input" placeholder="Task">
 
-
-
-
-    <input type="text" autocomplete="off" name="task" class="input" placeholder="Task">
 
 
     <button class="button" id="add-todo" onclick="addTodo()">Add Todo</button>
+
     <button class="button" id="load-todos" onclick="loadTodos()">Load Todos</button>
 <script>
 function loadTodos() {
     fetch('/todos')
-        .then(function (response) {
-            return response.json();
+        .then(function(response) {
+            return response.json(); // turn the response into JSON
         })
-        .then(function (todos) {
+        .then(function(todos) {
+            
             const list = document.getElementById('todo-list');
-            list.innerHTML = ""; // clear old todos before adding new ones
 
+            
             for (let i = 0; i < todos.length; i++) {
                 const todo = todos[i];
 
+            
                 const li = document.createElement('li');
+                li.textContent = todo.task + " (Completed: " + todo.completed + ")";
 
-                const taskText = document.createElement('p');
-                taskText.textContent = todo.task;
-                li.appendChild(taskText);
-
-                const label = document.createElement('label');
-                label.className = 'checkbox-container';
-
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.className = 'custom-checkbox';
-                checkbox.checked = todo.completed;
-                label.appendChild(checkbox);
-
-                const checkmark = document.createElement('span');
-                checkmark.className = 'checkmark';
-                label.appendChild(checkmark);
-
-                li.appendChild(label);
+            
                 list.appendChild(li);
             }
         })
-        .catch(function (error) {
+        .catch(function(error) {
             console.log("Error fetching todos:", error);
         });
+}
+
+
+
+
+function addTodo() {
+    const input = document.getElementById("todo");
+    const taskValue = input.value.trim();
+
+    if (taskValue === "") {
+        alert("Please enter a task!");
+        return;
+    }
+
+    fetch("/todos", {
+        method: "POST",
+        body: JSON.stringify({
+            task: taskValue,
+            completed: false
+        }),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    })
+    .then(response => response.json())
+    .then(json => {
+        
+        document.getElementById("todo-list").innerHTML = "";
+        loadTodos(); 
+        document.getElementById("todo").value = "";
+    })
+    .catch(error => console.error("Error adding todo:", error));
 }
 
 
