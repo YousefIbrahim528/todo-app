@@ -1,0 +1,34 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+}
+
+h2 {
+    color: #34495e;
+}
+
+ul#todo-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul#todo-list li {
+    background-color: #fff;
+    margin: 10px 0;
+    padding: 10px;
+    border-left: 4px solid #3498db;
+    border-radius: 4px;
+}
+
+ul#todo-list li.completed {
+    text-decoration: line-through;
+    color: #7f8c8d;
+    border-left-color: #e74c3c;
+}
