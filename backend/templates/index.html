@@ -1,31 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todo App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <h1>Welcome to the Todo App!</h1>
     <h2>My Todos:</h2>
     <ul id="todo-list">
-        
+
     </ul>
 
-    <script>
-        
-        fetch('/todos')
-            .then(response => response.json())
-            .then(todos => {
-                const list = document.getElementById('todo-list');
-                todos.forEach(todo => {
-                    const li = document.createElement('li');
-                    li.textContent = `${todo.task} (Completed: ${todo.completed})`;
-                    list.appendChild(li);
-                });
-            })
-            .catch(error => console.error('Error fetching todos:', error));
-    </script>
+
+
+
+    <input type="text" autocomplete="off" name="task" class="input" placeholder="Task">
+
+
+    <button class="button" id="add-todo" onclick="addTodo()">Add Todo</button>
+    <button class="button" id="load-todos" onclick="loadTodos()">Load Todos</button>
+<script>
+function loadTodos() {
+    fetch('/todos')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (todos) {
+            const list = document.getElementById('todo-list');
+            list.innerHTML = ""; // clear old todos before adding new ones
+
+            for (let i = 0; i < todos.length; i++) {
+                const todo = todos[i];
+
+                const li = document.createElement('li');
+
+                const taskText = document.createElement('p');
+                taskText.textContent = todo.task;
+                li.appendChild(taskText);
+
+                const label = document.createElement('label');
+                label.className = 'checkbox-container';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'custom-checkbox';
+                checkbox.checked = todo.completed;
+                label.appendChild(checkbox);
+
+                const checkmark = document.createElement('span');
+                checkmark.className = 'checkmark';
+                label.appendChild(checkmark);
+
+                li.appendChild(label);
+                list.appendChild(li);
+            }
+        })
+        .catch(function (error) {
+            console.log("Error fetching todos:", error);
+        });
+}
+
+
+</script>
+
 </body>
+
 </html>
