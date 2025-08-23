@@ -17,24 +17,24 @@ def get_todos():
     for todo in todos.find():
         result.append({
             "_id": str(todo["_id"]),
-            "task": todo.get("task", ""),
-            "completed": todo.get("completed", False)
+            "task": todo.get("task", "")
         })
     return jsonify(result)
 
 @app.route('/todos', methods=['POST'])
 def create_todo():
     new_todo = {
-        "task": request.json.get("task", ""),
-        "completed": request.json.get("completed", False)
+        "task": request.json.get("task", "")
     }
     result = todos.insert_one(new_todo)
     new_todo["_id"] = str(result.inserted_id)
     return jsonify(new_todo), 201
 
 
-
-
-
+@app.route('/todos/<task_name>', methods=['DELETE'])
+def delete_todo(task_name):
+    myquery = {"task": task_name}
+    result = todos.delete_one(myquery)
+    
 if __name__ == '__main__':
     app.run(debug=True)

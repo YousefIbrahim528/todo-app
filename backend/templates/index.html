@@ -15,73 +15,86 @@
 
     </ul>
     <input type="text" id="todo" autocomplete="off" name="task" class="input" placeholder="Task">
-
-
-
     <button class="button" id="add-todo" onclick="addTodo()">Add Todo</button>
-
     <button class="button" id="load-todos" onclick="loadTodos()">Load Todos</button>
-<script>
-function loadTodos() {
-    fetch('/todos')
-        .then(function(response) {
-            return response.json(); // turn the response into JSON
-        })
-        .then(function(todos) {
-            
-            const list = document.getElementById('todo-list');
+    <script>
+        function loadTodos() {
+            fetch('/todos')
+                .then(function (response) {
+                    return response.json(); // turn the response into JSON
+                })
+                .then(function (todos) {
 
-            
-            for (let i = 0; i < todos.length; i++) {
-                const todo = todos[i];
-
-            
-                const li = document.createElement('li');
-                li.textContent = todo.task + " (Completed: " + todo.completed + ")";
-
-            
-                list.appendChild(li);
-            }
-        })
-        .catch(function(error) {
-            console.log("Error fetching todos:", error);
-        });
-}
+                    const list = document.getElementById('todo-list');
 
 
+                    for (let i = 0; i < todos.length; i++) {
+                        const todo = todos[i];
 
+                        const li = document.createElement('li');
+                        li.textContent = todo.task ;
 
-function addTodo() {
-    const input = document.getElementById("todo");
-    const taskValue = input.value.trim();
+                        
+                        const checkboxId = todo.task;
 
-    if (taskValue === "") {
-        alert("Please enter a task!");
-        return;
-    }
+                        var checkbox = document.createElement('input');
+                        checkbox.type = "checkbox";
+                        checkbox.id = checkboxId;
+                        checkbox.checked = false;
 
-    fetch("/todos", {
-        method: "POST",
-        body: JSON.stringify({
-            task: taskValue,
-            completed: false
-        }),
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
+                        var label = document.createElement('label');
+                        label.htmlFor = checkboxId;
+                        label.appendChild(document.createTextNode("Done?"));
+
+                        
+                        li.appendChild(checkbox);
+                        li.appendChild(label);
+
+                        list.appendChild(li);
+                    }
+
+                })
+                .catch(function (error) {
+                    console.log("Error fetching todos:", error);
+                });
         }
-    })
-    .then(response => response.json())
-    .then(json => {
-        
-        document.getElementById("todo-list").innerHTML = "";
-        loadTodos(); 
-        document.getElementById("todo").value = "";
-    })
-    .catch(error => console.error("Error adding todo:", error));
-}
 
 
-</script>
+
+
+        function addTodo() {
+            const input = document.getElementById("todo");
+            const taskValue = input.value.trim();
+
+            if (taskValue === "") {
+                alert("Please enter a task!");
+                return;
+            }
+
+            fetch("/todos", {
+                method: "POST",
+                body: JSON.stringify({
+                    task: taskValue
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            })
+                .then(response => response.json())
+                .then(json => {
+
+                    document.getElementById("todo-list").innerHTML = "";
+                    loadTodos();
+                    document.getElementById("todo").value = "";
+                })
+                .catch(error => console.error("Error adding todo:", error));
+        }
+        function deleteData(task, url) {
+            return fetch("/todos" + '/' + task, {
+                method: 'delete'
+            })
+        }
+    </script>
 
 </body>
 
