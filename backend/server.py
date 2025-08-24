@@ -34,7 +34,7 @@ def create_todo():
 @app.route('/todos/<task_name>', methods=['DELETE'])
 def delete_todo(task_name):
     myquery = {"task": task_name}
-    result = todos.delete_one(myquery)
+    todos.delete_one(myquery)
     
 if __name__ == '__main__':
     app.run(debug=True)

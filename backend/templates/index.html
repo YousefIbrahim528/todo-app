@@ -17,11 +17,15 @@
     <input type="text" id="todo" autocomplete="off" name="task" class="input" placeholder="Task">
     <button class="button" id="add-todo" onclick="addTodo()">Add Todo</button>
     <button class="button" id="load-todos" onclick="loadTodos()">Load Todos</button>
+
+
+
+
     <script>
         function loadTodos() {
             fetch('/todos')
                 .then(function (response) {
-                    return response.json(); // turn the response into JSON
+                    return response.json();
                 })
                 .then(function (todos) {
 
@@ -32,25 +36,39 @@
                         const todo = todos[i];
 
                         const li = document.createElement('li');
-                        li.textContent = todo.task ;
+                        li.textContent = todo.task;
 
-                        
-                        const checkboxId = todo.task;
+                        li.id = "task" + todo.task;
+
+                        const checkboxId = "checkbox" + todo.task;
 
                         var checkbox = document.createElement('input');
                         checkbox.type = "checkbox";
                         checkbox.id = checkboxId;
                         checkbox.checked = false;
+                        checkbox.classList.add("cyberpunk-checkbox");
+                        
+
+
+
 
                         var label = document.createElement('label');
                         label.htmlFor = checkboxId;
                         label.appendChild(document.createTextNode("Done?"));
 
-                        
+
                         li.appendChild(checkbox);
                         li.appendChild(label);
 
                         list.appendChild(li);
+                        checkbox.addEventListener('change', function (event) {
+                            const checkboxid = event.target.id;
+                            const taskName = checkboxid.replace("checkbox", ""); // extract task name
+
+                            deleteData(taskName); // send string
+                            const taskElement = document.getElementById("task" + taskName);
+                            taskElement.remove();
+                        });
                     }
 
                 })
@@ -89,7 +107,8 @@
                 })
                 .catch(error => console.error("Error adding todo:", error));
         }
-        function deleteData(task, url) {
+        function deleteData(task) {
+
             return fetch("/todos" + '/' + task, {
                 method: 'delete'
             })
