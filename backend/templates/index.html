@@ -1,120 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
+<div class="container">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Todo App</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
 
-<body>
-    <h1>Welcome to the Todo App!</h1>
-    <h2>My Todos:</h2>
-    <ul id="todo-list">
+    <body>
+        <h1>Welcome to the Todo App!</h1>
+        <h2>My Todos:</h2>
+        <ul id="todo-list">
 
-    </ul>
-    <input type="text" id="todo" autocomplete="off" name="task" class="input" placeholder="Task">
-    <button class="button" id="add-todo" onclick="addTodo()">Add Todo</button>
-    <button class="button" id="load-todos" onclick="loadTodos()">Load Todos</button>
-
-
-
-
-    <script>
-        function loadTodos() {
-            fetch('/todos')
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (todos) {
-
-                    const list = document.getElementById('todo-list');
-
-
-                    for (let i = 0; i < todos.length; i++) {
-                        const todo = todos[i];
-
-                        const li = document.createElement('li');
-                        li.textContent = todo.task;
-
-                        li.id = "task" + todo.task;
-
-                        const checkboxId = "checkbox" + todo.task;
-
-                        var checkbox = document.createElement('input');
-                        checkbox.type = "checkbox";
-                        checkbox.id = checkboxId;
-                        checkbox.checked = false;
-                        checkbox.classList.add("cyberpunk-checkbox");
-                        
+        </ul>
+        <input type="text" id="todo" autocomplete="off" name="task" class="input" placeholder="Task">
+        <button class="button" id="add-todo" onclick="addTodo()">Add Todo</button>
+        <button class="button" id="load-todos" onclick="loadTodos()">Load Todos</button>
 
 
 
 
-                        var label = document.createElement('label');
-                        label.htmlFor = checkboxId;
-                        label.appendChild(document.createTextNode("Done?"));
+        <script>
+            function loadTodos() {
+                document.getElementById("todo-list").innerHTML = "";
+                fetch('/todos')
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (todos) {
+
+                        const list = document.getElementById('todo-list');
 
 
-                        li.appendChild(checkbox);
-                        li.appendChild(label);
+                        for (let i = 0; i < todos.length; i++) {
+                            const todo = todos[i];
 
-                        list.appendChild(li);
-                        checkbox.addEventListener('change', function (event) {
-                            const checkboxid = event.target.id;
-                            const taskName = checkboxid.replace("checkbox", ""); // extract task name
+                            const li = document.createElement('li');
+                            li.textContent = todo.task;
 
-                            deleteData(taskName); // send string
-                            const taskElement = document.getElementById("task" + taskName);
-                            taskElement.remove();
-                        });
-                    }
+                            li.id = "task" + todo.task;
 
-                })
-                .catch(function (error) {
-                    console.log("Error fetching todos:", error);
-                });
-        }
+                            const checkboxId = "checkbox" + todo.task;
+                            const deleteId = "delete" + todo.task;
+
+                            var checkbox = document.createElement('input');
+                            checkbox.type = "checkbox";
+                            checkbox.id = checkboxId;
+                            checkbox.checked = false;
+                            checkbox.classList.add("cyberpunk-checkbox");
+
+                            const deleteBtn = document.createElement("button");
+                            deleteBtn.className = "buttondelete";
+                            deleteBtn.textContent = "Delete";
+                            deleteBtn.id = deleteId;
+
+
+                            li.appendChild(checkbox);
+
+                            li.appendChild(deleteBtn);
+
+                            list.appendChild(li);
+                            deleteBtn.addEventListener('click', function (event) {
+                                const id = event.target.id;
+                                const taskName = id.replace("delete", ""); // extract task name
+                                deleteData(taskName);
+                                const taskElement = document.getElementById("task" + taskName);
+                                taskElement.remove();
+                            });
+                            checkbox.addEventListener('change', function (event) {
+                                const id = event.target.id;
+                                const taskName = id.replace("checkbox", "");
+                                let Bool = false
+                                if (event.target.checked) {
+                                    Bool = true
+                                }
+                                postData(taskName, Bool);
+
+                            });
 
 
 
+                        }
 
-        function addTodo() {
-            const input = document.getElementById("todo");
-            const taskValue = input.value.trim();
-
-            if (taskValue === "") {
-                alert("Please enter a task!");
-                return;
+                    })
+                    .catch(function (error) {
+                        console.log("Error fetching todos:", error);
+                    });
             }
 
-            fetch("/todos", {
-                method: "POST",
-                body: JSON.stringify({
-                    task: taskValue
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
+
+
+
+            function addTodo() {
+                const input = document.getElementById("todo");
+                const taskValue = input.value.trim();
+
+                if (taskValue === "") {
+                    alert("Please enter a task!");
+                    return;
                 }
-            })
-                .then(response => response.json())
-                .then(json => {
 
-                    document.getElementById("todo-list").innerHTML = "";
-                    loadTodos();
-                    document.getElementById("todo").value = "";
+                fetch("/todos", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        task: taskValue
+                    }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
                 })
-                .catch(error => console.error("Error adding todo:", error));
-        }
-        function deleteData(task) {
+                    .then(response => response.json())
+                    .then(json => {
 
-            return fetch("/todos" + '/' + task, {
-                method: 'delete'
-            })
-        }
-    </script>
+                        document.getElementById("todo-list").innerHTML = "";
+                        loadTodos();
+                        document.getElementById("todo").value = "";
+                    })
+                    .catch(error => console.error("Error adding todo:", error));
+            }
+            function deleteData(task) {
 
-</body>
+                return fetch("/todos" + '/' + task, {
+                    method: 'delete'
+                })
+            }
+            function postData(task, currentboolean) {
+                const path = "/todos/" + task;
+                fetch(path, {
+                    method: "PUT",   
+                    body: JSON.stringify({
+                        completed: currentboolean   
+                    }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => console.log("Updated:", data))
+                    .catch(error => console.error("Error updating todo:", error));
+            }
+
+
+
+
+        </script>
+
+    </body>
+
+
+</div>
 
 </html>
