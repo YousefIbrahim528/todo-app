@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<div class="container">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Todo App</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+
+    <body>
+        <h1>Welcome to the Todo App!</h1>
+        <h2>My Todos:</h2>
+        <ul id="todo-list">
+
+        </ul>
+        <input type="text" id="todo" autocomplete="off" name="task" class="input" placeholder="Task">
+        <button class="button" id="add-todo" onclick="addTodo()">Add Todo</button>
+        <button class="button" id="load-todos" onclick="loadTodos()">Load Todos</button>
+
+
+
+
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    </body>
+
+
+</div>
+
+</html>
