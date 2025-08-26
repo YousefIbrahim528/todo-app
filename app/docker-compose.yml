@@ -1,34 +1,46 @@
-version: '3'
+
 services:
   flask_app:
     build: .
     container_name: flask_app
-    ports:
-      - "5000:5000"
-    links:
-      - mongodb
     networks:
       - app-network
-    
     environment:
       - MONGO_URI=mongodb://mongodb:27017/TaskManager
-   
+    depends_on:
+      - mongodb
+
   mongodb:
-      image: mongo:4.4
-      container_name: mongodb
-      ports:
-        - "27017:27017"
-      networks:
-        - app-network
-      environment:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: example
-      volumes:
+    image: mongo:4.4
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    volumes:
       - db-data:/mongo-data
+
+  web_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - flask_app
+    networks:
+      - app-network
+    volumes:
+      - logs:/var/log/nginx
+
 volumes:
   db-data:
-
+  logs:
 
 networks:
   app-network:
-    driver: bridge  
+    driver: bridge
