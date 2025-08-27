@@ -13,8 +13,22 @@ mongo_uri = os.getenv('MONGO_URI', 'mongodb://root:pass@localhost:27017/prod-db?
 client = MongoClient(mongo_uri)
 db = client['prod-db']
 todos = db.todos
+users = db.users
+
+
+
+
+
 
 @app.route('/')
+def login_page():
+    return render_template('login.html')
+
+
+def signup_page():
+    return render_template('signup.html')
+
+@app.route('/index')
 def index():
     return render_template('index.html')
 

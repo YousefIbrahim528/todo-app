@@ -1,3 +1,9 @@
+            
+            
+            
+            document.getElementById("login").addEventListener('submit', login);
+            document.getElementById("signup").addEventListener('submit', signup);
+
             function loadTodos() {
                 document.getElementById("todo-list").innerHTML = "";
                 fetch('/todos')
