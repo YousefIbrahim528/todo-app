@@ -8,10 +8,10 @@ app = Flask(
     static_folder="static"
 )
 
-# Use environment variable from docker-compose
-mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/TaskManager")
+
+mongo_uri = os.getenv('MONGO_URI', 'mongodb://root:pass@localhost:27017/prod-db?authSource=admin')
 client = MongoClient(mongo_uri)
-db = client["TaskManager"]
+db = client['prod-db']
 todos = db.todos
 
 @app.route('/')

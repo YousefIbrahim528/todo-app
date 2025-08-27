@@ -1,4 +1,4 @@
-
+version: '3.8'
 services:
   flask_app:
     build: .
@@ -6,22 +6,25 @@ services:
     networks:
       - app-network
     environment:
-      - MONGO_URI=mongodb://mongodb:27017/TaskManager
+      - MONGO_URI=mongodb://root:pass@mongodb:27017/prod-db?authSource=admin
     depends_on:
       - mongodb
+    ports:
+      - "5000:5000"
 
   mongodb:
     image: mongo:4.4
-    container_name: mongodb
+    hostname: test_mongodb
     ports:
       - "27017:27017"
     networks:
       - app-network
     environment:
+      - MONGO_INITDB_DATABASE=todo_db
       - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=example
+      - MONGO_INITDB_ROOT_PASSWORD=pass
     volumes:
-      - db-data:/mongo-data
+      - db-data:/data/db  # Corrected volume path (was /mongo-data)
 
   web_server:
     build:
