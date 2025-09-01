@@ -8,6 +8,9 @@ app = Flask(
     static_folder="static"
 )
 
+# Secret key is required for using Flask sessions.
+# Read from environment for production, fallback to a development key.
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret')
 
 mongo_uri = os.getenv('MONGO_URI', 'mongodb://root:pass@localhost:27017/prod-db?authSource=admin')
 client = MongoClient(mongo_uri)
@@ -47,14 +50,12 @@ def login():
 
         if user_password == password:
             session['email'] = email
-            return redirect(url_for('index'))
+            return render_template('index.html')
         else:
             return render_template('login.html', error="Invalid password")
-    
+    else:
+        return render_template('login.html', error="User not found")
 
-
-
-    
 @app.route('/signup', methods=['POST'])
 def signup():
     email = request.form.get('email')
@@ -72,7 +73,8 @@ def signup():
 def get_todos():
     result = []
     email = session.get("email")
-    for todo in todos.find({"email": email}):
+    todoss = todos.find({"email": email})
+    for todo in todoss:
         result.append({
             "_id": str(todo["_id"]),
             "task": todo.get("task", ""),
