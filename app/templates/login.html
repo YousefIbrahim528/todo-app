@@ -1,32 +1,36 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App</title>
+    <title>Todo App - Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-
 <body>
     <div class="form">
-     
-    <form id="login" action="/login" method="post">
-        <span class="input-span">
-            <label for="email" class="label">Email</label>
-            <input type="email" name="email" id="email" /></span>
-        <span class="input-span">
-            <label for="password" class="label">Password</label>
-            <input type="password" name="password" id="password" /></span>
-        
-        <input class="submit" type="submit" value="Log in" />
-        <span class="span">Don't have an account? <a href="#">Sign up</a></span>
-    </form>
+        <form id="login" action="/login" method="post">
+            <span class="input-span">
+                <label for="email" class="label">Email</label>
+                <input type="email" name="email" id="email" required />
+            </span>
+            
+            <span class="input-span">
+                <label for="password" class="label">Password</label>
+                <input type="password" name="password" id="password" required />
+            </span>
 
-    </div>  
+            <input class="submit" type="submit" value="Log in" />
 
+            <span class="span">
+                Don't have an account? 
+                <a href="{{ url_for('signup_page') }}">Sign up</a>
+            </span>
+        </form>
+    </div>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>

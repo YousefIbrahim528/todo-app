@@ -14,17 +14,19 @@
     <form id="signup" action="/signup" method="post">
         <span class="input-span">
             <label for="email" class="label">Email</label>
-            <input type="email" name="email" id="email" /></span>
+            <input type="email" name="email" id="email" required /></span>
         <span class="input-span">
             <label for="password" class="label">Password</label>
-            <input type="password" name="password" id="password" /></span>
+            <input type="password" name="password" id="password" required />
+        </span>
 
+        <span class="input-span">
+            <label for="confirm_password" class="label">Confirm Password</label>
+            <input type="password" name="confirm_password" id="confirm_password" required />
+        </span>
 
-            <label for="password" class="label">confirm password</label>
-            <input type="password" name="password" id="password" /></span>
-        
         <input class="submit" type="submit" value="sign up" />
-        <span class="span">Do u have an account? <a href="#">login</a></span>
+        <span class="span">Do you have an account? <a href="{{ url_for('login_page') }}">login</a></span>
     </form>
 
     </div>  

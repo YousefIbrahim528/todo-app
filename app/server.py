@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, session,redirect,url_for
 from pymongo import MongoClient
 import os
 
@@ -25,17 +25,54 @@ def login_page():
     return render_template('login.html')
 
 
+
+@app.route('/signup', methods=['GET'])
 def signup_page():
     return render_template('signup.html')
 
-@app.route('/index')
-def index():
+
+@app.route('/login', methods=['GET'])
+def login_page_get():
+    return render_template('login.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    user = users.find_one({"email": email, "password": password})
+    if user:
+        
+        user_password = user["password"]
+
+        if user_password == password:
+            session['email'] = email
+            return redirect(url_for('index'))
+        else:
+            return render_template('login.html', error="Invalid password")
+    
+
+
+
+    
+@app.route('/signup', methods=['POST'])
+def signup():
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    existing_user = users.find_one({"email": email})
+    if existing_user:
+        return render_template('signup.html', error="User already exists")
+
+    users.insert_one({"email": email, "password": password})
     return render_template('index.html')
+
 
 @app.route('/todos', methods=['GET'])
 def get_todos():
     result = []
-    for todo in todos.find():
+    email = session.get("email")
+    for todo in todos.find({"email": email}):
         result.append({
             "_id": str(todo["_id"]),
             "task": todo.get("task", ""),
@@ -46,6 +83,7 @@ def get_todos():
 @app.route('/todos', methods=['POST'])
 def create_todo():
     new_todo = {
+        "email": session.get("email"),
         "task": request.json.get("task", ""),
         "completed": False
     }
